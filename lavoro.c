@@ -35,8 +35,8 @@ int stipendio;
 int giorni_di_lavoro;
 int punti_scheda;
 
-BOOL FAR PASCAL ElencoDitte(HWND hDlg, WORD message, WORD wParam, LONG lParam);
-BOOL FAR PASCAL CercaLavoro(HWND hDlg, WORD message, WORD wParam, LONG lParam);
+INT_PTR CALLBACK ElencoDitte(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
+INT_PTR CALLBACK CercaLavoro(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 void            AggiornaLavoro(HWND hDlg);
 
 char Risposte1[3];
@@ -89,10 +89,10 @@ int GiornoDiLavoro(HWND hDlg, char *s)
 }
 
 #pragma argsused
-BOOL FAR PASCAL Lavoro(HWND hDlg, WORD message, WORD wParam, LONG lParam)
+INT_PTR CALLBACK Lavoro(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
     char       tmp[255];
-    FARPROC    lpproc;
+    DLGPROC    lpproc;
     int        n_ditta;
     int        i;
     static int Rcheck;
@@ -111,7 +111,7 @@ BOOL FAR PASCAL Lavoro(HWND hDlg, WORD message, WORD wParam, LONG lParam)
 
     else if (message == WM_COMMAND)
     {
-        switch (wParam)
+        switch (LOWORD(wParam))
         {
 
         case 110: // Cerca Lavoro ----------------------------------------------------------------------------------
@@ -378,7 +378,7 @@ BOOL FAR PASCAL Lavoro(HWND hDlg, WORD message, WORD wParam, LONG lParam)
 /* Cerca Lavoro ------------------------------------------------------------------------------- */
 
 #pragma argsused
-BOOL FAR PASCAL CercaLavoro(HWND hDlg, WORD message, WORD wParam, LONG lParam)
+INT_PTR CALLBACK CercaLavoro(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
     int i;
 
@@ -395,7 +395,7 @@ BOOL FAR PASCAL CercaLavoro(HWND hDlg, WORD message, WORD wParam, LONG lParam)
 
     else if (message == WM_COMMAND)
     {
-        switch (wParam)
+        switch (LOWORD(wParam))
         {
         case 101:
         case 102:
@@ -448,9 +448,9 @@ void AggiornaLavoro(HWND hDlg)
 }
 
 #pragma argsused
-BOOL FAR PASCAL ElencoDitte(HWND hDlg, WORD message, WORD wParam, LONG lParam)
+INT_PTR CALLBACK ElencoDitte(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    FARPROC lpproc;
+    DLGPROC lpproc;
 
     if (message == WM_INITDIALOG)
     {
@@ -458,7 +458,7 @@ BOOL FAR PASCAL ElencoDitte(HWND hDlg, WORD message, WORD wParam, LONG lParam)
     }
     else if (message == WM_COMMAND)
     {
-        switch (wParam)
+        switch (LOWORD(wParam))
         { // Informazioni su ogni ditta
         case 100:
         case 101:

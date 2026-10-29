@@ -143,7 +143,7 @@ PagaDisco(HANDLE hInstance)
 //******************************************************************
 
 #pragma argsused
-BOOL FAR PASCAL Disco(HWND hDlg, WORD message, WORD wParam, LONG lParam)
+INT_PTR CALLBACK Disco(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
     char buf[1024];
     char tmp[1024];
@@ -179,7 +179,7 @@ BOOL FAR PASCAL Disco(HWND hDlg, WORD message, WORD wParam, LONG lParam)
 
     else if (message == WM_COMMAND)
     {
-        switch (wParam)
+        switch (LOWORD(wParam))
         {
         case 101:
         case 102:
@@ -189,7 +189,7 @@ BOOL FAR PASCAL Disco(HWND hDlg, WORD message, WORD wParam, LONG lParam)
         case 106:
         case 107:
         case 108:
-            numdisco = wParam - 100;
+            numdisco = LOWORD(wParam) - 100;
             LoadString(hInst, wParam, buf, 1024);
 
             if (sesso == 'M') // Le donne pagano meno...

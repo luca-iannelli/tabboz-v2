@@ -45,6 +45,7 @@ etc...
 #ifdef TABBOZ_WIN16
 #define TABBOZ_WIN
 #include <windows.h>
+#include <commdlg.h>
 
 #ifndef OFN_LONGNAMES
 #define OFN_LONGNAMES 0x00200000L
@@ -56,6 +57,7 @@ etc...
 #ifdef TABBOZ_WIN32
 #define TABBOZ_WIN
 #include <windows.h>
+#include <commdlg.h>
 
 #ifndef OFN_LONGNAMES
 #define OFN_LONGNAMES 0x00200000L
@@ -66,4 +68,26 @@ etc...
 
 #ifdef TABBOZ_EM
 #include "novantotto.h"
+#endif
+
+#ifdef TABBOZ_DESKTOP
+#include <stdlib.h>
+#include <time.h>
+#include <commdlg.h>
+#include "native/desktop.h"
+#ifndef _export
+#define _export
+#endif
+#undef MakeProcInstance
+#undef FreeProcInstance
+#define MakeProcInstance(proc, instance) ((DLGPROC)(proc))
+#define FreeProcInstance(proc) ((void)0)
+#define random(n) ((n) > 0 ? rand() % (n) : 0)
+#define randomize() srand((unsigned)time(NULL))
+#define _argc __argc
+#define _argv __argv
+#undef DialogBox
+#define DialogBox TabbozDialogBox
+#undef MessageBox
+#define MessageBox TabbozMessageBox
 #endif

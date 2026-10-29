@@ -6,3 +6,11 @@
 *.bak
 *.BAK
 /novantotto
+
+/build/
+/dist/
+/.tools/
+__pycache__/
+*.pyc
+
+/build-*.log

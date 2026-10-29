@@ -299,10 +299,10 @@ extern HANDLE hdlgr;
 // ED I PROTOTIPI FUNZIONI...
 
 #ifdef TABBOZ_WIN
-extern int PASCAL      WinMain(HANDLE hInstance, HANDLE hPrevInstance,
+extern int PASCAL      WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
                                LPSTR lpszCmdLine, int cmdShow);
-extern BOOL FAR PASCAL MainDlgBoxProc(HWND hDlg, WORD message,
-                                      WORD wParam, LONG lParam);
+extern INT_PTR CALLBACK MainDlgBoxProc(HWND hDlg, UINT message,
+                                      WPARAM wParam, LPARAM lParam);
 #endif
 
 extern void Evento(HWND hWnd);
@@ -310,33 +310,33 @@ extern void RunPalestra(HWND hDlg);            /* 23 Aprile 1998 */
 extern void RunTabacchi(HWND hDlg);            /* 23 Aprile 1998 */
 extern void RunVestiti(HWND hDlg, int numero); /* 23 Aprile 1998 */
 
-extern BOOL FAR PASCAL About(HWND hDlg, WORD message, WORD wParam, LONG lParam);
-extern BOOL FAR PASCAL Warning(HWND hDlg, WORD message, WORD wParam, LONG lParam);
-extern BOOL FAR PASCAL Disco(HWND hDlg, WORD message, WORD wParam, LONG lParam);
-extern BOOL FAR PASCAL Famiglia(HWND hDlg, WORD message, WORD wParam, LONG lParam);
-extern BOOL FAR PASCAL Compagnia(HWND hDlg, WORD message, WORD wParam, LONG lParam);
-extern BOOL FAR PASCAL Tipa(HWND hDlg, WORD message, WORD wParam, LONG lParam);
-extern BOOL FAR PASCAL Lavoro(HWND hDlg, WORD message, WORD wParam, LONG lParam);
-extern BOOL FAR PASCAL Scuola(HWND hDlg, WORD message, WORD wParam, LONG lParam);
-extern BOOL FAR PASCAL Scooter(HWND hDlg, WORD message, WORD wParam, LONG lParam);
-extern BOOL FAR PASCAL Vestiti(HWND hDlg, WORD message, WORD wParam, LONG lParam);
-extern BOOL FAR PASCAL Configuration(HWND hDlg, WORD message, WORD wParam, LONG lParam);
-extern BOOL FAR PASCAL PersonalInfo(HWND hDlg, WORD message, WORD wParam, LONG lParam);
-extern BOOL FAR PASCAL Logo(HWND hDlg, WORD message, WORD wParam, LONG lParam);              /* 13 Marzo 1998 */
-extern BOOL FAR PASCAL Tabaccaio(HWND hDlg, WORD message, WORD wParam, LONG lParam);         /* 19 Marzo 1998 */
-extern BOOL FAR PASCAL Palestra(HWND hDlg, WORD message, WORD wParam, LONG lParam);          /* iniziata il 20 Marzo 1998  */
-extern BOOL FAR PASCAL Setup(HWND hDlg, WORD message, WORD wParam, LONG lParam);             /* 9 Giugno 1998 */
-extern BOOL FAR PASCAL Spegnimi(HWND hDlg, WORD message, WORD wParam, LONG lParam);          /* 11 Giugno 1998 */
-extern BOOL FAR PASCAL Network(HWND hDlg, WORD message, WORD wParam, LONG lParam);           /* 25 Giugno 1998 */
-extern BOOL FAR PASCAL MostraSalutieBaci(HWND hDlg, WORD message, WORD wParam, LONG lParam); /* 4 Gennaio 1999 */
-extern BOOL FAR PASCAL Cellular(HWND hDlg, WORD message, WORD wParam, LONG lParam);          /* 31 Marzo 1999 */
+extern INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
+extern INT_PTR CALLBACK Warning(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
+extern INT_PTR CALLBACK Disco(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
+extern INT_PTR CALLBACK Famiglia(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
+extern INT_PTR CALLBACK Compagnia(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
+extern INT_PTR CALLBACK Tipa(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
+extern INT_PTR CALLBACK Lavoro(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
+extern INT_PTR CALLBACK Scuola(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
+extern INT_PTR CALLBACK Scooter(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
+extern INT_PTR CALLBACK Vestiti(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
+extern INT_PTR CALLBACK Configuration(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
+extern INT_PTR CALLBACK PersonalInfo(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
+extern INT_PTR CALLBACK Logo(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);              /* 13 Marzo 1998 */
+extern INT_PTR CALLBACK Tabaccaio(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);         /* 19 Marzo 1998 */
+extern INT_PTR CALLBACK Palestra(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);          /* iniziata il 20 Marzo 1998  */
+extern INT_PTR CALLBACK Setup(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);             /* 9 Giugno 1998 */
+extern INT_PTR CALLBACK Spegnimi(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);          /* 11 Giugno 1998 */
+extern INT_PTR CALLBACK Network(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);           /* 25 Giugno 1998 */
+extern INT_PTR CALLBACK MostraSalutieBaci(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam); /* 4 Gennaio 1999 */
+extern INT_PTR CALLBACK Cellular(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);          /* 31 Marzo 1999 */
 
 extern void  TabbozAddKey(char *key, char *v);
-extern char *TabbozReadKey(char *key, char *buf);
+extern char *TabbozReadKey(char *key, char *buf, size_t capacity);
 extern void  TabbozPlaySound(int number);
 
 #ifdef PROMPT_ACTIVE
-extern BOOL FAR PASCAL Prompt(HWND hDlg, WORD message, WORD wParam, LONG lParam); /* iniziato il 15 Maggio 1998 */
+extern INT_PTR CALLBACK Prompt(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam); /* iniziato il 15 Maggio 1998 */
 #endif
 
 extern void  FineProgramma(char *caller);
@@ -351,9 +351,17 @@ extern void   new_reset_check(void); // 14 Marzo 1999
 extern void openlog(void);
 extern void closelog(void);
 extern void nomoney(HWND parent, int tipo);
-extern void AggiornaPrincipale();
+extern void AggiornaPrincipale(HWND parent);
 extern void Giorno(HANDLE hInstance);
 extern void CalcolaStudio(void);
 extern void CalcolaVelocita(HANDLE hDlg);
 extern void SalvaTutto(void);
 extern void AggiornaTipa(HWND hDlg);
+
+extern void SpegniISuoni(void);
+
+extern void TabbozCalendarRefresh(void);
+extern void ResetMe(int first);
+extern int vvc(int value);
+
+extern INT_PTR CALLBACK FormatTabboz(HWND,UINT,WPARAM,LPARAM);

@@ -1,0 +1,27 @@
+TABBOZ SIMULATOR - WINDOWS EDITION 2.0.0
+
+Per Windows 10 versione 1903 o successiva e Windows 11, x64.
+Eseguire Tabboz.exe oppure usare l'installer. Non servono browser,
+BWCC.DLL, permessi amministratore o runtime da scaricare.
+
+Il motore di gioco, le attivita', i personaggi e i suoni sono quelli
+del Tabboz Simulator originale. La nuova interfaccia e' ridimensionabile.
+La valuta e' l'euro: si conserva la conversione gia' prevista dal gioco,
+con i centesimi e senza modificare prezzi e bilanciamento interni.
+
+Ctrl+N: nuova partita. Ctrl+O: apri un file .tbz.
+Ctrl+S: salva la partita corrente. Menu File: salva con nome.
+Tab e Alt consentono la navigazione da tastiera.
+
+I salvataggi risiedono in %LOCALAPPDATA%\Tabboz Simulator\.
+La disinstallazione conserva i salvataggi. Anche la versione portabile
+usa questa cartella, separata dall'eseguibile.
+
+Sorgenti, documentazione, attribuzioni e istruzioni di build:
+https://github.com/luca-iannelli/tabboz-v2
+
+Gioco originale (C) 1997-2001 Andrea Bonomi, Emanuele Caccialanza,
+Daniele Gazzarri e collaboratori. Sorgenti originali:
+https://github.com/andreax79/tabboz
+Licenza: GNU GPL versione 3 o successiva; vedere LICENSE.
+Splash di questa edizione fornito da Luca Iannelli.

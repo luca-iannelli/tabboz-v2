@@ -34,23 +34,23 @@ int         figTemp;
 char        nomeTemp[30];
 HWND        tipahDlg; // Serve per BMPTipaWndProc (in Tabimg.c )
 
-BOOL FAR PASCAL CercaTipa(HWND hDlg, WORD message, WORD wParam, LONG lParam);
-BOOL FAR PASCAL DueDiPicche(HWND hDlg, WORD message, WORD wParam, LONG lParam);
+INT_PTR CALLBACK CercaTipa(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
+INT_PTR CALLBACK DueDiPicche(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 void            DescrizioneTipa(int f);
 void            DescrizioneTipo(int f);
-long FAR PASCAL BMPTipaWndProc(HWND hWnd, WORD msg,
-                               WORD wParam, LONG lParam);
+LRESULT CALLBACK BMPTipaWndProc(HWND hWnd, UINT msg,
+                               WPARAM wParam, LPARAM lParam);
 
 // ------------------------------------------------------------------------------------------
 // Tipa...
 // ------------------------------------------------------------------------------------------
 
 #pragma argsused
-BOOL FAR PASCAL Tipa(HWND hDlg, WORD message, WORD wParam, LONG lParam)
+INT_PTR CALLBACK Tipa(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
     char    buf[128];
     char    tmp[128];
-    FARPROC lpproc;
+    DLGPROC lpproc;
     int     lasciaoraddoppia;
 
     switch (message)
@@ -66,7 +66,7 @@ BOOL FAR PASCAL Tipa(HWND hDlg, WORD message, WORD wParam, LONG lParam)
         return (TRUE);
 
     case WM_COMMAND:
-        switch (wParam)
+        switch (LOWORD(wParam))
         {
         case 110: // Cerca tipa
             lpproc = MakeProcInstance(CercaTipa, hInst);
@@ -273,7 +273,7 @@ BOOL FAR PASCAL Tipa(HWND hDlg, WORD message, WORD wParam, LONG lParam)
 // ------------------------------------------------------------------------------------------
 
 #pragma argsused
-BOOL FAR PASCAL DueDonne(HWND hDlg, WORD message, WORD wParam, LONG lParam)
+INT_PTR CALLBACK DueDonne(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
     char tmp[255];
 
@@ -295,7 +295,7 @@ BOOL FAR PASCAL DueDonne(HWND hDlg, WORD message, WORD wParam, LONG lParam)
     }
     else if (message == WM_COMMAND)
     {
-        switch (wParam)
+        switch (LOWORD(wParam))
         {
         case 101: // Ottima scelta...
             if (sesso == 'M')
@@ -349,7 +349,7 @@ Dopo questa tragica esperienza anche %s sparisce...",
 // ------------------------------------------------------------------------------------------
 
 #pragma argsused
-BOOL FAR PASCAL CercaTipa(HWND hDlg, WORD message, WORD wParam, LONG lParam)
+INT_PTR CALLBACK CercaTipa(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
     char       tmp[255];
     static int i;
@@ -384,7 +384,7 @@ BOOL FAR PASCAL CercaTipa(HWND hDlg, WORD message, WORD wParam, LONG lParam)
 
     else if (message == WM_COMMAND)
     {
-        switch (wParam)
+        switch (LOWORD(wParam))
         {
         case IDCANCEL:
             EndDialog(hDlg, TRUE);
@@ -409,7 +409,7 @@ BOOL FAR PASCAL CercaTipa(HWND hDlg, WORD message, WORD wParam, LONG lParam)
                 // ...ma comunque controlla che tu non abbia gia' una tipa -------------------------
                 if (Rapporti > 0)
                 { // hai gia' una tipa..
-                    FARPROC lpproc = MakeProcInstance(DueDonne, hInst);
+                    DLGPROC lpproc = MakeProcInstance(DueDonne, hInst);
                     DialogBox(hInst,
                               MAKEINTRESOURCE(92 + spostamento),
                               hDlg,
@@ -431,7 +431,7 @@ BOOL FAR PASCAL CercaTipa(HWND hDlg, WORD message, WORD wParam, LONG lParam)
             }
             else
             {
-                FARPROC lpproc;
+                DLGPROC lpproc;
 
                 // 2 di picche... -------------------------------------------------------
                 if (sound_active)
@@ -521,7 +521,7 @@ void DescrizioneTipo(int f)
 // ------------------------------------------------------------------------------------------
 
 #pragma argsused
-BOOL FAR PASCAL DueDiPicche(HWND hDlg, WORD message, WORD wParam, LONG lParam)
+INT_PTR CALLBACK DueDiPicche(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
     char       tmp[1024];
     static int i;
@@ -553,7 +553,7 @@ BOOL FAR PASCAL DueDiPicche(HWND hDlg, WORD message, WORD wParam, LONG lParam)
     }
     else if (message == WM_COMMAND)
     {
-        switch (wParam)
+        switch (LOWORD(wParam))
         {
         case 201:
             i++;
@@ -619,7 +619,7 @@ void AggiornaTipa(HWND hDlg)
 // ------------------------------------------------------------------------------------------
 
 #pragma argsused
-BOOL FAR PASCAL MostraSalutieBaci(HWND hDlg, WORD message, WORD wParam, LONG lParam)
+INT_PTR CALLBACK MostraSalutieBaci(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
     if (message == WM_INITDIALOG)
     {
@@ -628,7 +628,7 @@ BOOL FAR PASCAL MostraSalutieBaci(HWND hDlg, WORD message, WORD wParam, LONG lPa
     else if (message == WM_COMMAND)
     {
 
-        switch (wParam)
+        switch (LOWORD(wParam))
         {
 
         case 205:

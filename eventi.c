@@ -31,8 +31,8 @@
 static char sccsid[] = "@(#)" __FILE__ " " VERSION " (Andrea Bonomi) " __DATE__;
 
 char                   messaggio[256];
-BOOL FAR PASCAL        MostraMetallone(HWND hDlg, WORD message, WORD wParam, LONG lParam);
-extern BOOL FAR PASCAL DueDonne(HWND hDlg, WORD message, WORD wParam, LONG lParam);
+INT_PTR CALLBACK        MostraMetallone(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
+extern INT_PTR CALLBACK DueDonne(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 extern int             figTemp;
 extern char            nomeTemp[];
 // extern	int	AdV;
@@ -41,11 +41,11 @@ extern char            nomeTemp[];
 /* EVENTI CASUALI...                                                */
 /********************************************************************/
 
-void Evento(HANDLE hInstance)
+void Evento(HWND hInstance)
 {
     int     caso, i;
     char    tmp[128];
-    FARPROC lpproc;
+    DLGPROC lpproc;
 
     if (Fortuna < 0)
         Fortuna = 0; /* Prima che qualcuno bari... */
@@ -573,7 +573,7 @@ void Evento(HANDLE hInstance)
 //
 
 #pragma argsused
-BOOL FAR PASCAL MostraMetallone(HWND hDlg, WORD message, WORD wParam, LONG lParam)
+INT_PTR CALLBACK MostraMetallone(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
     char tmp[1024];
 
@@ -592,7 +592,7 @@ BOOL FAR PASCAL MostraMetallone(HWND hDlg, WORD message, WORD wParam, LONG lPara
     }
     else if (message == WM_COMMAND)
     {
-        switch (wParam)
+        switch (LOWORD(wParam))
         {
 
         case IDCANCEL:

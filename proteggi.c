@@ -84,7 +84,7 @@ long     int        xxx2=0;
         exit(1);
     }
 
-// sprintf(writebuf,"t8è+#§ù0hiq"); /* 11 e non uno di piu' */
+// sprintf(writebuf,"t8Ã¨+#Â§Ã¹0hiq"); /* 11 e non uno di piu' */
 
     for (i=0; i < 11;i++) {
         writebuf[i]=buf[96+i];

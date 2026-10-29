@@ -26,11 +26,11 @@
 #include <time.h>
 
 #ifdef TABBOZ_WIN
-#include <bwcc.h>
-#include <dos.h>
+// Obsolete Borland controls replaced by native Windows resources.
 #endif
 
 #include "zarrosim.h"
+#include "native/money.h"
 #ifdef TABBOZ_WIN
 #ifndef NONETWORK
 #include "net.h"
@@ -44,7 +44,7 @@ extern int             vvc(int i); /* 15 Giugno 1998 - v0.7.1 - Verifica Valori 
 extern u_long          new_counter;
 extern ATOM            RegisterBMPViewClass(HANDLE hInst);
 extern ATOM            RegisterBMPTipaClass(HANDLE hInst);
-extern long FAR PASCAL BMPViewWndProc(HWND hWnd, WORD msg, WORD wParam, LONG lParam);
+extern LRESULT CALLBACK BMPViewWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 extern char            nome_del_file_su_cui_salvare[];
 extern void            OpenFileDlg(HWND hwnd);
 extern void            SaveFileDlg(HWND hwnd);
@@ -100,8 +100,8 @@ int sound_active; /* 1 Marzo 1999 */
 
 // #define WIN_PICCOLO SW_MINIMIZE
 // #define WIN_PICCOLO SW_SHOWMINIMIZED
-#define WIN_PICCOLO SW_HIDE
-#define WIN_GRANDE SW_SHOWNORMAL
+#define WIN_PICCOLO SW_SHOW
+#define WIN_GRANDE SW_SHOW
 
 // Questo serve se e' attivo il debug...
 
@@ -197,7 +197,7 @@ void ResetMe(int primavolta)
         STARTcmdShow = 1;
         timer_active = 1;
         sound_active = 1;
-        euro = 0;
+        euro = 1;
         sesso = 'M';
         strcpy(Nome, "Tizio");
         strcpy(Cognome, "Caio");
@@ -232,7 +232,7 @@ void ResetMe(int primavolta)
 //*******************************************************************
 
 #pragma argsused
-BOOL FAR PASCAL FormatTabboz(HWND hDlg, WORD message, WORD wParam, LONG lParam)
+INT_PTR CALLBACK FormatTabboz(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
     static char tmpsesso;
 
@@ -303,10 +303,10 @@ BOOL FAR PASCAL FormatTabboz(HWND hDlg, WORD message, WORD wParam, LONG lParam)
 void InitTabboz(void)
 {
     char    tmp[128];
-    FARPROC lpproc;
+    DLGPROC lpproc;
 #ifdef TABBOZ_WIN
     // Init della liberia grafica...
-    BWCCRegister(hInst); // Fanculo ! Mi sono magiato il fegato prima di trovare
+    TabbozDesktopInit(); // Fanculo ! Mi sono magiato il fegato prima di trovare
                          // questa funzione ! non c'e' nessuno documento fottuto che mi abbia aiutato !
 #endif
     nome_del_file_su_cui_salvare[0] = 0;
@@ -421,6 +421,8 @@ void InitTabboz(void)
 
 static void CaricaTutto(void)
 {
+    firsttime = 0;
+    TabbozStoreInvalidate();
     char tmp[128];
     int  i;
 
@@ -430,9 +432,9 @@ static void CaricaTutto(void)
 
     /* Cerca le informazioni registrate */
 
-    Soldi = new_check_l(atol(RRKey("Soldi"))); // ATOL, visto che Soldi e' un LONG, non un semplice INT
+    Soldi = new_check_l(strtoul(RRKey("Soldi"), NULL, 10)); // ATOL, visto che Soldi e' un LONG, non un semplice INT
 
-    Paghetta = new_check_l(atol(RRKey("Paghetta")));
+    Paghetta = new_check_l(strtoul(RRKey("Paghetta"), NULL, 10));
 
     Reputazione = vvc(new_check_i(atoi(RRKey("Reputazione"))));
 
@@ -444,28 +446,28 @@ static void CaricaTutto(void)
 
     Stato = vvc(new_check_i(atoi(RRKey("Stato"))));
 
-    DDP = new_check_l(atol(RRKey("DdP"))); // ATOL, visto che e' un LONG, non un semplice INT
+    DDP = new_check_l(strtoul(RRKey("DdP"), NULL, 10)); // ATOL, visto che e' un LONG, non un semplice INT
 
     FigTipa = vvc(new_check_i(atoi(RRKey("FigTipa"))));
 
-    if (TabbozReadKey("Nome", Nome) == 0)
+    if (TabbozReadKey("Nome", Nome, sizeof(Nome)) == 0)
         Nome[0] = '\0';
-    if (TabbozReadKey("Cognome", Cognome) == 0)
+    if (TabbozReadKey("Cognome", Cognome, sizeof(Cognome)) == 0)
         Cognome[0] = '\0';
-    if (TabbozReadKey("Nometipa", Nometipa) == 0)
+    if (TabbozReadKey("Nometipa", Nometipa, sizeof(Nometipa)) == 0)
         Nometipa[0] = '\0';
 
-    if (TabbozReadKey("City", City) == 0)
+    if (TabbozReadKey("City", City, sizeof(City)) == 0)
         firsttime = 1;
 
-    TabbozReadKey("Residenza", Residenza);
+    TabbozReadKey("Residenza", Residenza, sizeof(Residenza));
 
-    TabbozReadKey("Street", Street);
+    TabbozReadKey("Street", Street, sizeof(Street));
 
     // la serie di 9 "A" messe nella riga sotto NON E' CASUALE
     // non sostituirla con altre lettere !
 
-    if (TabbozReadKey("Materie", tmp) == 0)
+    if (TabbozReadKey("Materie", tmp, sizeof(tmp)) == 0)
         sprintf(tmp, "AAAAAAAAA");
 
     for (i = 1; i < 10; i++)
@@ -480,7 +482,7 @@ static void CaricaTutto(void)
 
     // Se e' la prima volta che parte il Tabboz Simulator, la data e' impostata al 30 Settembre
     x_mese = atoi(RRKey("Mese"));
-    if (x_mese < 1)
+    if (x_mese < 1 || x_mese > 12)
         x_mese = 9;
     x_giorno = atoi(RRKey("Giorno"));
     if (x_giorno < 1)
@@ -494,7 +496,7 @@ static void CaricaTutto(void)
 
     // Se non e' gia' settato,setta il compleanno
     comp_mese = atoi(RRKey("CompMese"));
-    if (comp_mese < 1)
+    if (comp_mese < 1 || comp_mese > 12)
         comp_mese = random(12) + 1;
 
     comp_giorno = atoi(RRKey("CompGiorno"));
@@ -520,17 +522,16 @@ static void CaricaTutto(void)
     current_pantaloni = vvc(new_check_i(atoi(RRKey("Pantaloni"))));
     current_scarpe = vvc(new_check_i(atoi(RRKey("Scarpe"))));
 
-    euro = atoi(RRKey("Euro"));
+    euro = 1;
     if (euro < 0)
     {
-        euro = 0;
+        euro = 1;
     }
 
 #ifdef NOTABBOZZA
     sesso = 'M';
 #else
-    strcpy(tmp, (RRKey("Sesso")));
-    sesso = tmp[0];
+    sesso = RRKey("Sesso")[0];
     if ((sesso != 'M') && (sesso != 'F'))
         sesso = 'M';
 #endif
@@ -588,20 +589,20 @@ static void CaricaTutto(void)
 
     /*  antifurto               = atoi (RRKey("Scooter\\Antifurto") ); */
 
-    if (TabbozReadKey("Scooter\\Nome", ScooterData.nome) == 0)
+    if (TabbozReadKey("Scooter\\Nome", ScooterData.nome, sizeof(ScooterData.nome)) == 0)
         sprintf(ScooterData.nome, "nessuno");
 
     //  Cellulare ----------------------
 
     AbbonamentData.dualonly = new_check_i(atoi(RRKey("Cellular\\DualOnly")));
     AbbonamentData.creditorest = new_check_i(atoi(RRKey("Cellular\\CreditoRest")));
-    if (TabbozReadKey("Cellular\\NomeAbb", AbbonamentData.nome) == 0)
+    if (TabbozReadKey("Cellular\\NomeAbb", AbbonamentData.nome, sizeof(AbbonamentData.nome)) == 0)
         AbbonamentData.creditorest = -1;
 
     CellularData.dual = new_check_i(atoi(RRKey("Cellular\\DualBand")));
     CellularData.stato = new_check_i(atoi(RRKey("Cellular\\Stato")));
     CellularData.prezzo = new_check_i(atoi(RRKey("Cellular\\Prezzo")));
-    if (TabbozReadKey("Cellular\\Nome", CellularData.nome) == 0)
+    if (TabbozReadKey("Cellular\\Nome", CellularData.nome, sizeof(CellularData.nome)) == 0)
         CellularData.stato = -1;
 
     if (firsttime) /* 29 Novembre 1998 */
@@ -612,7 +613,7 @@ static void CaricaTutto(void)
         x_giorno = 1;
     if (x_giorno > 31)
         x_giorno = 1;
-    if (x_mese < 1)
+    if (x_mese < 1 || x_mese > 12)
         x_mese = 1;
     if (x_mese > 12)
         x_mese = 1;
@@ -621,9 +622,7 @@ static void CaricaTutto(void)
     if (x_giornoset > 7)
         x_giornoset = 1;
 
-    x_giorno--; /* Per evitare che avanzi di giorno ogni volta che si apre il programma */
-    x_giornoset--;
-    Giorno(hInst);
+    TabbozCalendarRefresh(); /* Loading does not replay wages, events or work days. */
 
 #ifdef TABBOZ_DEBUG
     // Non si possono mettere le infomazioni del counter nel file di log
@@ -685,6 +684,7 @@ void FineProgramma(char *caller)
 
 void SalvaTutto(void)
 {
+    if (!TabbozStoreBegin()) { TabbozSaveSucceeded=0; return; }
     char tmp[128];
     int  i;
 
@@ -857,6 +857,7 @@ void SalvaTutto(void)
     TabbozAddKey("SoftCheck", tmp);
 
     TabbozAddKey("Version", VERSION);
+    TabbozStoreCommit();
 
     // #ifdef TABBOZ_DEBUG
     //     sprintf(tmp,"tabboz: (W) new_counter %lu", new_counter);
@@ -869,7 +870,7 @@ void SalvaTutto(void)
 /********************************************************************/
 
 #pragma argsused
-BOOL FAR PASCAL About(HWND hDlg, WORD message, WORD wParam, LONG lParam)
+INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
     char buf[128];
     char tmp[128];
@@ -972,7 +973,7 @@ BOOL FAR PASCAL About(HWND hDlg, WORD message, WORD wParam, LONG lParam)
 /********************************************************************/
 
 #pragma argsused
-BOOL FAR PASCAL Logo(HWND hDlg, WORD message, WORD wParam, LONG lParam)
+INT_PTR CALLBACK Logo(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
     int x, y, w, h;
 
@@ -987,19 +988,10 @@ BOOL FAR PASCAL Logo(HWND hDlg, WORD message, WORD wParam, LONG lParam)
         /* w = wrect.right - wrect.left;                                            */
         /* h = wrect.bottom - wrect.top;                                */
 
-        w = 522; /* dimensioni dell' immagine del logo */
-        h = 402;
-
-        x = GetSystemMetrics(SM_CXSCREEN);
-        y = GetSystemMetrics(SM_CYSCREEN);
-
-        x = (x - w) / 2;
-        y = (y - h) / 2;
-
-        MoveWindow(hDlg, x, y, w, h, 1);
+        /* The native dialog owns its DPI-aware size and fits the original artwork. */
 
         if (fase_di_avvio == 1)
-            SetTimer(hDlg, WM_TIMER, 10000, NULL); /* 10 Secondi */
+            SetTimer(hDlg, WM_TIMER, 1500, NULL); /* 10 Secondi */
 
         return (TRUE);
     }
@@ -1039,7 +1031,7 @@ BOOL FAR PASCAL Logo(HWND hDlg, WORD message, WORD wParam, LONG lParam)
 /********************************************************************/
 
 #pragma argsused
-BOOL FAR PASCAL Spegnimi(HWND hDlg, WORD message, WORD wParam, LONG lParam)
+INT_PTR CALLBACK Spegnimi(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
     int         x, y, w, h;
     static RECT wrect;
@@ -1111,9 +1103,9 @@ BOOL FAR PASCAL Spegnimi(HWND hDlg, WORD message, WORD wParam, LONG lParam)
 /********************************************************************/
 
 #pragma argsused
-BOOL FAR PASCAL Configuration(HWND hDlg, WORD message, WORD wParam, LONG lParam)
+INT_PTR CALLBACK Configuration(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    FARPROC lpproc;
+    DLGPROC lpproc;
 #ifdef TABBOZ_DEBUG
     static int temp_debug;
 #endif
@@ -1173,7 +1165,7 @@ BOOL FAR PASCAL Configuration(HWND hDlg, WORD message, WORD wParam, LONG lParam)
             STARTcmdShow = !STARTcmdShow;
             return (TRUE);
         case 107:
-            euro = !euro;
+            euro = 1;
             return (TRUE);
         case 108:
             timer_active = !timer_active;
@@ -1238,7 +1230,7 @@ BOOL FAR PASCAL Configuration(HWND hDlg, WORD message, WORD wParam, LONG lParam)
 /********************************************************************/
 
 #pragma argsused
-BOOL FAR PASCAL PersonalInfo(HWND hDlg, WORD message, WORD wParam, LONG lParam)
+INT_PTR CALLBACK PersonalInfo(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
     char tmp[128];
 
@@ -1292,23 +1284,23 @@ BOOL FAR PASCAL PersonalInfo(HWND hDlg, WORD message, WORD wParam, LONG lParam)
         switch (LOWORD(wParam))
         {
         case 111:
-            GetDlgItemText(hDlg, wParam, Residenza, sizeof(Residenza));
+            GetDlgItemText(hDlg, LOWORD(wParam), Residenza, sizeof(Residenza));
             break;
 
         case 107:
-            GetDlgItemText(hDlg, wParam, Street, sizeof(Street));
+            GetDlgItemText(hDlg, LOWORD(wParam), Street, sizeof(Street));
             break;
 
         case 105:
-            GetDlgItemText(hDlg, wParam, City, sizeof(City));
+            GetDlgItemText(hDlg, LOWORD(wParam), City, sizeof(City));
             break;
 
         case 101: /* Cognome del tabbozzo */
-            GetDlgItemText(hDlg, wParam, Cognome, sizeof(Cognome));
+            GetDlgItemText(hDlg, LOWORD(wParam), Cognome, sizeof(Cognome));
             break;
 
         case QX_NOME: /* Nome del tabbozzo */
-            GetDlgItemText(hDlg, wParam, Nome, sizeof(Nome));
+            GetDlgItemText(hDlg, LOWORD(wParam), Nome, sizeof(Nome));
             break;
 
         case IDOK:
@@ -1338,7 +1330,7 @@ BOOL FAR PASCAL PersonalInfo(HWND hDlg, WORD message, WORD wParam, LONG lParam)
 /*    PortTool v2.2     4/8/1999    14:40          */
 /*      Found   : FAR          */
 /*      Issue   : Win32 is non-segmented, thus FAR == NEAR == nothing!          */
-BOOL FAR PASCAL Warning(HWND hDlg, WORD message, WORD wParam, LONG lParam)
+INT_PTR CALLBACK Warning(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
     char buf[128];
 
@@ -1374,7 +1366,7 @@ BOOL FAR PASCAL Warning(HWND hDlg, WORD message, WORD wParam, LONG lParam)
 /********************************************************************/
 
 #pragma argsused
-BOOL FAR PASCAL Famiglia(HWND hDlg, WORD message, WORD wParam, LONG lParam)
+INT_PTR CALLBACK Famiglia(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
     char tmp[1024];
 
@@ -1486,7 +1478,7 @@ allora si' che i giovani studiavano...",
 /*    PortTool v2.2     4/8/1999    14:40          */
 /*      Found   : FAR          */
 /*      Issue   : Win32 is non-segmented, thus FAR == NEAR == nothing!          */
-BOOL FAR PASCAL Compagnia(HWND hDlg, WORD message, WORD wParam, LONG lParam)
+INT_PTR CALLBACK Compagnia(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
     char buf[128];
     char tmp[128];
@@ -1740,6 +1732,7 @@ void AggiornaPrincipale(HWND parent)
 {
     char tmp[128];
 
+    if (!parent) return;
     ShowWindow(parent, WIN_GRANDE);
 
     sprintf(tmp, "%s %s", Nome, Cognome);
@@ -1765,9 +1758,9 @@ void AggiornaPrincipale(HWND parent)
     }
     else
     {
-        sprintf(tmp, " "); // Nometipa
+        sprintf(tmp, "Nessuna relazione"); // Nometipa
         SetDlgItemText(parent, 155, tmp);
-        SetDlgItemText(parent, 154, tmp);
+        SetDlgItemText(parent, 154, "");
     }
 
     if (ScooterData.stato != -1)
@@ -1779,9 +1772,9 @@ void AggiornaPrincipale(HWND parent)
     }
     else
     {
-        sprintf(tmp, " ");
+        sprintf(tmp, "Nessuno scooter");
         SetDlgItemText(parent, 150, tmp); // Nomescooter
-        SetDlgItemText(parent, 156, tmp); // Stato scooter
+        SetDlgItemText(parent, 156, ""); // Stato scooter
     }
 
     sprintf(tmp, "%s %d %s", InfoSettimana[x_giornoset - 1].nome, x_giorno, InfoMese[x_mese - 1].nome); // Calendario
@@ -1805,6 +1798,7 @@ void AggiornaPrincipale(HWND parent)
         SetDlgItemText(parent, 133, "Tipo");
         SetDlgItemText(parent, 170, "Rapporto con il tipo");
     }
+    TabbozDesktopRefresh(parent);
 }
 
 //*******************************************************************
@@ -1822,10 +1816,10 @@ void AggiornaPrincipale(HWND parent)
 //*******************************************************************
 
 #pragma argsused
-BOOL CALLBACK _export TabbozWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+INT_PTR CALLBACK TabbozWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     static HICON hIcon;
-    FARPROC      lpproc;
+    DLGPROC      lpproc;
 
     switch (message)
     {
@@ -1838,7 +1832,7 @@ BOOL CALLBACK _export TabbozWndProc(HWND hWnd, UINT message, WPARAM wParam, LPAR
     case WM_QUERYDRAGICON: // 25 Feb 1999 - Questa e' l' icona per ALT-TAB...
         if (!hIcon)
             hIcon = LoadIcon(hInst, MAKEINTRESOURCE(1));
-        return (long)hIcon;
+        return (INT_PTR)hIcon;
 
     case WM_DESTROY:
         if (hIcon)
@@ -1849,7 +1843,7 @@ BOOL CALLBACK _export TabbozWndProc(HWND hWnd, UINT message, WPARAM wParam, LPAR
     case WM_SYSCOMMAND:
         switch (LOWORD(wParam))
         {
-            FARPROC lpproc;
+            DLGPROC lpproc;
 
         case QX_ABOUT:
             /* Display about box. */
@@ -2174,7 +2168,7 @@ BOOL CALLBACK _export TabbozWndProc(HWND hWnd, UINT message, WPARAM wParam, LPAR
         case QX_VESTITI4:
         case QX_VESTITI5:
             ShowWindow(hWnd, WIN_PICCOLO);
-            RunVestiti(hWnd, (wParam - QX_VESTITI1 + BAUHOUSE));
+            RunVestiti(hWnd, (LOWORD(wParam) - QX_VESTITI1 + BAUHOUSE));
             AggiornaPrincipale(hWnd);
             break;
         case QX_TIPA:
@@ -2252,12 +2246,7 @@ char *MostraSoldi(u_long i)
 {
     static char tmp[128];
 
-    if (euro)
-        sprintf(tmp, "%lue", (i / 2));
-    else if (i == 0)
-        sprintf(tmp, "0 L.");
-    else
-        sprintf(tmp, "%lu000 L.", i);
+    TabbozFormatMoney(i, tmp, sizeof(tmp));
 
     return tmp;
 }
@@ -2323,10 +2312,14 @@ void writelog(const char *s)
 #ifndef LINUX
 
 #pragma argsused
-int PASCAL WinMain(HANDLE hInstance, HANDLE hPrevInstance,
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
                    LPSTR lpszCmdLine, int cmdShow)
 {
     hInst = hInstance;
+    TabbozDesktopInit();
+    if (strstr(lpszCmdLine,"--self-test")) return TabbozSelfTest(hInstance);
+    if (!TabbozStoreInit()) { MessageBoxW(NULL,L"Cartella dei salvataggi non disponibile.",L"Tabboz Simulator",MB_OK|MB_ICONERROR); return 1; }
+
 
 #ifdef TABBOZ_WIN16
     /* Non si puo' lanciare piu' di una copia del Tabboz Simulator x volta... 17 Maggio 1998 */
@@ -2342,30 +2335,7 @@ int PASCAL WinMain(HANDLE hInstance, HANDLE hPrevInstance,
 
     /* Chiusura */
 
-    // Nuova chiusura - 19 Giugno 1999, speriamo che ora non crashi piu'...
-    if (boolean_shutdown == 2)
-    {
-        FineProgramma("shutdown"); // Salvataggio partita...
-#ifdef TABBOZ_DEBUG
-        if (debug_active)
-        {
-            writelog("tabboz: end (exit + shutdown)");
-            closelog();
-        }
-#endif
-        ExitWindows(0, 0);
-    }
-    else
-    {
-        FineProgramma("main"); // Salvataggio partita...
-#ifdef TABBOZ_DEBUG
-        if (debug_active)
-        {
-            writelog("tabboz: end (standard exit)");
-            closelog();
-        }
-#endif
-    }
+    SpegniISuoni(); /* Save-and-close is handled once by the desktop dialog. */
 
     return 0;
 }
@@ -2411,55 +2381,15 @@ int main(int argc, char **argv)
 // Dialog x la scelta del file da aprire...
 //*******************************************************************
 
-void OpenFileDlg(HWND hwnd)
-{
-    static char         szFileName[MAX_PATH];
-    static OPENFILENAME ofn;
-    memset(&(ofn), 0, sizeof(OPENFILENAME));
-
-    ofn.lStructSize = sizeof(OPENFILENAME);
-    ofn.hwndOwner = hwnd;
-    ofn.hInstance = hInst;
-    ofn.lpstrFile = szFileName;
-    ofn.nMaxFile = MAX_PATH;
-    ofn.lpstrDefExt = "tbz";
-    ofn.lpstrFilter = "Tabboz Files (*.tbz)\000*.tbz\000";
-    ofn.Flags = OFN_HIDEREADONLY | OFN_LONGNAMES | OFN_FILEMUSTEXIST;
-
-    if (GetOpenFileName(&ofn))
-    {
-        strcpy(nome_del_file_su_cui_salvare, szFileName);
-        CaricaTutto();
-        nome_del_file_su_cui_salvare[0] = '\0';
-    }
-}
+void OpenFileDlg(HWND hwnd) { TabbozChooseFile(hwnd, 0); }
 
 //*******************************************************************
 // Dialog x la scelta del file da salvare...
 //*******************************************************************
 
-void SaveFileDlg(HWND hwnd)
-{
-    static char         szFileName[256];
-    static OPENFILENAME ofn;
-    memset(&(ofn), 0, sizeof(OPENFILENAME));
+void SaveFileDlg(HWND hwnd) { TabbozChooseFile(hwnd, 1); }
 
-    ofn.lStructSize = sizeof(OPENFILENAME);
-    ofn.hwndOwner = hwnd;
-    ofn.hInstance = hInst;
-    ofn.lpstrFile = szFileName;
-    ofn.nMaxFile = sizeof(szFileName);
-    ofn.lpstrDefExt = "tbz";
-    ofn.lpstrFilter = "Tabboz Files (*.tbz)\000*.tbz\000";
-    ofn.Flags = OFN_HIDEREADONLY | OFN_LONGNAMES | OFN_OVERWRITEPROMPT | OFN_NOTESTFILECREATE;
-
-    if (GetSaveFileName(&ofn))
-    {
-        strcpy(nome_del_file_su_cui_salvare, szFileName);
-        SalvaTutto();
-        nome_del_file_su_cui_salvare[0] = '\0';
-    }
-}
+void TabbozLoadGame(void) { CaricaTutto(); }
 
 //*******************************************************************
 // Copyright (c) 1997-2000 Andrea Bonomi

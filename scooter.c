@@ -29,12 +29,12 @@
 #include "zarrosim.h"
 static char sccsid[] = "@(#)" __FILE__ " " VERSION " (Andrea Bonomi) " __DATE__;
 
-BOOL FAR PASCAL RiparaScooter(HWND hDlg, WORD message, WORD wParam, LONG lParam);
-BOOL FAR PASCAL VendiScooter(HWND hDlg, WORD message, WORD wParam, LONG lParam);
-BOOL FAR PASCAL Concessionario(HWND hDlg, WORD message, WORD wParam, LONG lParam);
-BOOL FAR PASCAL AcquistaScooter(HWND hDlg, WORD message, WORD wParam, LONG lParam);
-BOOL FAR PASCAL TruccaScooter(HWND hDlg, WORD message, WORD wParam, LONG lParam);
-BOOL FAR PASCAL CompraUnPezzo(HWND hDlg, WORD message, WORD wParam, LONG lParam);
+INT_PTR CALLBACK RiparaScooter(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
+INT_PTR CALLBACK VendiScooter(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
+INT_PTR CALLBACK Concessionario(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
+INT_PTR CALLBACK AcquistaScooter(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
+INT_PTR CALLBACK TruccaScooter(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
+INT_PTR CALLBACK CompraUnPezzo(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 
 /* Il 28 Aprile 1998 la procedura scooter e' cambiata radicalmente... */
 extern void  AggiornaScooter(HWND hDlg);
@@ -125,11 +125,11 @@ void CalcolaVelocita(HWND hDlg)
 /********************************************************************/
 
 #pragma argsused
-BOOL FAR PASCAL Scooter(HWND hDlg, WORD message, WORD wParam, LONG lParam)
+INT_PTR CALLBACK Scooter(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
     char    buf[128];
     char    tmp[128];
-    FARPROC lpproc;
+    DLGPROC lpproc;
 
     if (message == WM_INITDIALOG)
     {
@@ -153,7 +153,7 @@ BOOL FAR PASCAL Scooter(HWND hDlg, WORD message, WORD wParam, LONG lParam)
 
     else if (message == WM_COMMAND)
     {
-        switch (wParam)
+        switch (LOWORD(wParam))
         {
         case 101:
             if (x_vacanza == 2)
@@ -359,7 +359,7 @@ BOOL FAR PASCAL Scooter(HWND hDlg, WORD message, WORD wParam, LONG lParam)
 /********************************************************************/
 
 #pragma argsused
-BOOL FAR PASCAL AcquistaScooter(HWND hDlg, WORD message, WORD wParam, LONG lParam)
+INT_PTR CALLBACK AcquistaScooter(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
     int                 num_moto;
     static NEWSTSCOOTER ScooterTemp;
@@ -373,7 +373,7 @@ BOOL FAR PASCAL AcquistaScooter(HWND hDlg, WORD message, WORD wParam, LONG lPara
     }
     else if (message == WM_COMMAND)
     {
-        switch (wParam)
+        switch (LOWORD(wParam))
         {
         case 121:
         case 122:
@@ -416,7 +416,7 @@ BOOL FAR PASCAL AcquistaScooter(HWND hDlg, WORD message, WORD wParam, LONG lPara
 /********************************************************************/
 
 #pragma argsused
-BOOL FAR PASCAL VendiScooter(HWND hDlg, WORD message, WORD wParam, LONG lParam)
+INT_PTR CALLBACK VendiScooter(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
     char        tmp[128]; /* Arghhhh ! fino alla 0.8.0 qui c'era un 30 che faceva crashiare tutto !!!! */
     static long offerta;  /* importante lo static !!! */
@@ -442,7 +442,7 @@ BOOL FAR PASCAL VendiScooter(HWND hDlg, WORD message, WORD wParam, LONG lParam)
 
     else if (message == WM_COMMAND)
     {
-        switch (wParam)
+        switch (LOWORD(wParam))
         {
         case IDCANCEL:
             EndDialog(hDlg, TRUE);
@@ -476,7 +476,7 @@ BOOL FAR PASCAL VendiScooter(HWND hDlg, WORD message, WORD wParam, LONG lParam)
 /********************************************************************/
 
 #pragma argsused
-BOOL FAR PASCAL RiparaScooter(HWND hDlg, WORD message, WORD wParam, LONG lParam)
+INT_PTR CALLBACK RiparaScooter(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
     char        tmp[128];
     static long costo; // Importante lo static !!!
@@ -493,7 +493,7 @@ BOOL FAR PASCAL RiparaScooter(HWND hDlg, WORD message, WORD wParam, LONG lParam)
     }
     else if (message == WM_COMMAND)
     {
-        switch (wParam)
+        switch (LOWORD(wParam))
         {
 
         case IDCANCEL:
@@ -537,9 +537,9 @@ BOOL FAR PASCAL RiparaScooter(HWND hDlg, WORD message, WORD wParam, LONG lParam)
 /********************************************************************/
 
 #pragma argsused
-BOOL FAR PASCAL TruccaScooter(HWND hDlg, WORD message, WORD wParam, LONG lParam)
+INT_PTR CALLBACK TruccaScooter(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    FARPROC lpproc;
+    DLGPROC lpproc;
 
     if (message == WM_INITDIALOG)
     {
@@ -550,7 +550,7 @@ BOOL FAR PASCAL TruccaScooter(HWND hDlg, WORD message, WORD wParam, LONG lParam)
     }
     else if (message == WM_COMMAND)
     {
-        switch (wParam)
+        switch (LOWORD(wParam))
         {
         case 121:
         case 122:
@@ -624,7 +624,7 @@ void AggiornaScooter(HWND hDlg)
 // -----------------------------------------------------------------------
 
 #pragma argsused
-BOOL FAR PASCAL CompraUnPezzo(HWND hDlg, WORD message, WORD wParam, LONG lParam)
+INT_PTR CALLBACK CompraUnPezzo(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
     char tmp[128];
     int  i;
@@ -650,7 +650,7 @@ BOOL FAR PASCAL CompraUnPezzo(HWND hDlg, WORD message, WORD wParam, LONG lParam)
 
     else if (message == WM_COMMAND)
     {
-        switch (wParam)
+        switch (LOWORD(wParam))
         {
         case 130: /* marmitte ----------------------------------------------------------- */
         case 131:
@@ -780,10 +780,10 @@ char *MostraSpeed(void)
 // -----------------------------------------------------------------------
 
 #pragma argsused
-BOOL FAR PASCAL Concessionario(HWND hDlg, WORD message, WORD wParam, LONG lParam)
+INT_PTR CALLBACK Concessionario(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
     char    tmp[128];
-    FARPROC lpproc;
+    DLGPROC lpproc;
 
     if (message == WM_INITDIALOG)
     {
@@ -793,7 +793,7 @@ BOOL FAR PASCAL Concessionario(HWND hDlg, WORD message, WORD wParam, LONG lParam
 
     else if (message == WM_COMMAND)
     {
-        switch (wParam)
+        switch (LOWORD(wParam))
         {
         case 101: /* Compra Scooter Malagutty	  */
         case 102: /* Compra Scooter di altre marche */

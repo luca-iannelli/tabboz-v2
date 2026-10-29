@@ -59,7 +59,7 @@ static int CellularVacanza(HWND hDlg)
 // ------------------------------------------------------------------------------------------
 
 #pragma argsused
-BOOL FAR PASCAL CompraCellulare(HWND hDlg, WORD message, WORD wParam, LONG lParam) /* 31 Marzo 1999 */
+INT_PTR CALLBACK CompraCellulare(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam) /* 31 Marzo 1999 */
 {
     int        i;
     static int scelta = 0;
@@ -130,7 +130,7 @@ STABB AbbonamentMem[] =
 };
 
 #pragma argsused
-BOOL FAR PASCAL AbbonaCellulare(HWND hDlg, WORD message, WORD wParam, LONG lParam) /* 31 Marzo 1999 */
+INT_PTR CALLBACK AbbonaCellulare(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam) /* 31 Marzo 1999 */
 {
     char       tmp[128];
     int        i;
@@ -246,10 +246,10 @@ void AggiornaCell(HWND hDlg)
 }
 
 #pragma argsused
-BOOL FAR PASCAL Cellular(HWND hDlg, WORD message, WORD wParam, LONG lParam) /* 31 Marzo 1999 */
+INT_PTR CALLBACK Cellular(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam) /* 31 Marzo 1999 */
 {
     char    tmp[128];
-    FARPROC lpproc;
+    DLGPROC lpproc;
     long    offerta;
     int     scelta;
     if (message == WM_INITDIALOG)

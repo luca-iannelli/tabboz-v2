@@ -1,0 +1,68 @@
+{
+  "items": [
+    {
+      "id": "upstream-source",
+      "kind": "source-repository",
+      "source": "https://github.com/andreax79/tabboz",
+      "location": ".",
+      "acquired_at": "2026-10-29T08:26:00Z",
+      "reacquisition": "allowed",
+      "commit": "142fa7de71fe3d4700fa0027f18d45c6ccdaa9be",
+      "license": "GPL-3.0-or-later"
+    },
+    {
+      "id": "original-windows-executable",
+      "kind": "reference-executable",
+      "source": "https://github.com/andreax79/tabboz/blob/142fa7de71fe3d4700fa0027f18d45c6ccdaa9be/release/tabboz.exe",
+      "location": "release/tabboz.exe",
+      "acquired_at": "2026-10-29T08:26:00Z",
+      "reacquisition": "allowed",
+      "sha256": "002f3a76801adb2e1e891426ef7ae7f6f15895b853ef20a22573794d912bb683"
+    },
+    {
+      "id": "original-rea-evidence",
+      "kind": "static-analysis-evidence",
+      "source": "REA 6.7.0 MCP; local reference executable",
+      "location": "docs/research/original-rea-evidence.json",
+      "acquired_at": "2026-10-29T08:33:42.947191+00:00",
+      "reacquisition": "allowed",
+      "notes": "Full source available; use source for gameplay investigation, REA for shipped artifact validation."
+    },
+    {
+      "id": "user-splash",
+      "kind": "artwork",
+      "source": "User-provided Tabboz Simulator_ Edizione Windows 10_11.png",
+      "location": "assets/splash.png",
+      "acquired_at": "2026-10-29",
+      "reacquisition": "prohibited",
+      "sha256": "c4eae75eab3b6d3cddd7fd2cb606acedc0e029951ca9a84b6741c4550d393bdb"
+    },
+    {
+      "id": "user-icon",
+      "kind": "icon",
+      "source": "User-provided tabboz-simulator.ico",
+      "location": "assets/app.ico",
+      "acquired_at": "2026-10-29",
+      "reacquisition": "prohibited",
+      "sha256": "39abe9ab1b667f2ce213e34f0d5251cdcf4824ba390aad90d2073c7480040de0"
+    },
+    {
+      "id": "inno-compiler",
+      "kind": "build-tool",
+      "source": "https://api.nuget.org/v3-flatcontainer/tools.innosetup/6.7.3/tools.innosetup.6.7.3.nupkg",
+      "location": ".tools/innosetup-6.7.3.nupkg",
+      "acquired_at": "2026-10-29",
+      "reacquisition": "allowed",
+      "sha256": "f780898e402ff80612cc8d9fcb8c6e02932bd1cb4c900ffdaa31f9341cfb49f4"
+    },
+    {
+      "id": "native-windows-rea-evidence",
+      "kind": "static-analysis-evidence",
+      "source": "REA 6.7.0 MCP; final native x64 executable",
+      "location": "docs/research/windows-native-rea-evidence.json",
+      "acquired_at": "2026-10-29T16:18:02.864125+00:00",
+      "reacquisition": "allowed",
+      "sha256": "ea53749788968f26c564a9bcd3b0a33c29382e4e436591bb2d5610de6a0eb5aa"
+    }
+  ]
+}

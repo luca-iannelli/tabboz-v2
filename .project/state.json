@@ -1,0 +1,90 @@
+{
+  "schema_version": 2,
+  "project": {
+    "name": "Tabboz Simulator \u2014 Windows native modernization",
+    "summary": "Port the original C game to Windows 10/11 with a modern native interface and installer, preserving gameplay.",
+    "repository_locator": {
+      "provider": "github",
+      "repository": "luca-iannelli/tabboz-v2"
+    }
+  },
+  "status": "complete",
+  "updated_at": "2026-10-29T16:18:02Z",
+  "current_task": null,
+  "next_task": null,
+  "milestones": [
+    {
+      "id": "design",
+      "title": "Original assessment and reviewed native Windows design",
+      "status": "completed",
+      "primary_artifacts": [
+        "docs/research/2026-10-29-original-windows-assessment.md",
+        "docs/superpowers/specs/2026-10-29-windows-native-design.md"
+      ]
+    },
+    {
+      "id": "native-application",
+      "title": "Native x64 application with conserved gameplay and updated interface",
+      "status": "completed",
+      "primary_artifacts": [
+        "CMakeLists.txt",
+        "native/desktop.c",
+        "native/persistence.c",
+        "assets/splash.png",
+        "assets/app.ico"
+      ]
+    },
+    {
+      "id": "installer-validation",
+      "title": "Installer, portable package, and Windows validation",
+      "status": "completed",
+      "primary_artifacts": [
+        "installer/tabboz.iss",
+        "tools/package-windows.ps1",
+        "tools/test-installer.ps1",
+        "docs/VALIDATION.md",
+        "docs/research/windows-native-artifact-verification.md"
+      ]
+    }
+  ],
+  "decisions": [
+    {
+      "id": "ADR-0001",
+      "title": "Native C/Win32, preserved economy, modern euro UI and safe persistence",
+      "path": ".project/decisions/ADR-0001-native-windows-euros.md"
+    }
+  ],
+  "current_phase": "completed",
+  "provenance": {
+    "state_base_commit": "142fa7de71fe3d4700fa0027f18d45c6ccdaa9be",
+    "source_repository": "https://github.com/andreax79/tabboz",
+    "task_branch": "native/windows-modernization",
+    "destination_base_commit": "000ef96ec047fd9805ffdc158da4296eae887101"
+  },
+  "frozen_invariants": [
+    "Retain original C gameplay rules, economy, events, activity outcomes, original character assets, and tone.",
+    "Deliver a native Windows application and installer, preserving upstream attribution and GPL-3.0-or-later licensing.",
+    "The user selected C with modernized native Windows controls on 2026-10-29.",
+    "Euros are the default currency with cents; preserve the original internal-unit conversion and economy."
+  ],
+  "blockers": [],
+  "known_issues": [
+    {
+      "id": "windows-10-runtime",
+      "title": "Windows 10 actual runtime not tested; target minimum 1903 x64 validated statically"
+    },
+    {
+      "id": "physical-multi-dpi",
+      "title": "Physical multi-monitor DPI transitions not tested; simulated main-window layouts verified"
+    },
+    {
+      "id": "original-phone-arithmetic",
+      "title": "Original phone affordability arithmetic can underflow unsigned money; complete uint32 persistence is preserved without altering gameplay rules"
+    }
+  ],
+  "do_not_redo": [
+    "Upstream source is already cloned locally; reuse it and its pinned commit.",
+    "REA original PE resource analysis is retained in docs/research; do not repeat it without a new question.",
+    "MSVC 2022, Windows SDK, and CMake exist on the Windows host; do not install duplicate toolchains."
+  ]
+}

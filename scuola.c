@@ -55,7 +55,7 @@ BOOL CheckVacanza(HWND parent);
 /********************************************************************/
 
 #pragma argsused
-BOOL FAR PASCAL Scuola(HWND hDlg, WORD message, WORD wParam, LONG lParam)
+INT_PTR CALLBACK Scuola(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
     char tmp[128];
     int  i, i2;
@@ -82,7 +82,7 @@ BOOL FAR PASCAL Scuola(HWND hDlg, WORD message, WORD wParam, LONG lParam)
     }
     else if (message == WM_COMMAND)
     {
-        switch (wParam)
+        switch (LOWORD(wParam))
         {
         case 101: /* Corrompi i professori */
             if (!CheckVacanza(hDlg))
@@ -202,7 +202,7 @@ BOOL FAR PASCAL Scuola(HWND hDlg, WORD message, WORD wParam, LONG lParam)
         case 116:
         case 117:
         case 118:
-            scelta = wParam - 109;
+            scelta = LOWORD(wParam) - 109;
             sprintf(tmp, "Corrompi il prof di %s", MaterieMem[scelta].nome);
             SetDlgItemText(hDlg, 101, tmp);
             if (sesso == 'M')

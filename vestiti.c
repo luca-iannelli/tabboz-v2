@@ -29,7 +29,7 @@
 static char sccsid[] = "@(#)" __FILE__ " " VERSION " (Andrea Bonomi) " __DATE__;
 
 extern void     EventiPalestra(HANDLE hInstance);
-BOOL FAR PASCAL CompraQualcosa(HWND hDlg, WORD message, WORD wParam, LONG lParam);
+INT_PTR CALLBACK CompraQualcosa(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 void            PagaQualcosa(HWND parent);
 
 /* Per una questione di svogliatezza del programmatore, viene usata STSCOOTER anche x i vestiti. */
@@ -107,10 +107,10 @@ STSCOOTER SizeMem[] =
 /********************************************************************/
 
 #pragma argsused
-BOOL FAR PASCAL Vestiti(HWND hDlg, WORD message, WORD wParam, LONG lParam)
+INT_PTR CALLBACK Vestiti(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
     char    tmp[128];
-    FARPROC lpproc;
+    DLGPROC lpproc;
 
     if (message == WM_INITDIALOG)
     {
@@ -141,7 +141,7 @@ BOOL FAR PASCAL Vestiti(HWND hDlg, WORD message, WORD wParam, LONG lParam)
     else if (message == WM_COMMAND)
     {
 
-        switch (wParam)
+        switch (LOWORD(wParam))
         {
 
         case 101: // MAKEINTRESOURCE 80
@@ -254,7 +254,7 @@ void PagaQualcosa(HANDLE hInstance)
 //*******************************************************************
 
 #pragma argsused
-BOOL FAR PASCAL CompraQualcosa(HWND hDlg, WORD message, WORD wParam, LONG lParam)
+INT_PTR CALLBACK CompraQualcosa(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
     char tmp[128];
     int  i;
@@ -275,7 +275,7 @@ BOOL FAR PASCAL CompraQualcosa(HWND hDlg, WORD message, WORD wParam, LONG lParam
 
     else if (message == WM_COMMAND)
     {
-        switch (wParam)
+        switch (LOWORD(wParam))
         {
         case 101:
         case 102:
@@ -296,7 +296,7 @@ BOOL FAR PASCAL CompraQualcosa(HWND hDlg, WORD message, WORD wParam, LONG lParam
         case 117:
         case 118:
         case 119:
-            scelta = wParam - 100;
+            scelta = LOWORD(wParam) - 100;
             return (TRUE);
 
         case IDCANCEL:
@@ -322,7 +322,7 @@ BOOL FAR PASCAL CompraQualcosa(HWND hDlg, WORD message, WORD wParam, LONG lParam
 //*******************************************************************
 
 #pragma argsused
-BOOL FAR PASCAL Tabaccaio(HWND hDlg, WORD message, WORD wParam, LONG lParam)
+INT_PTR CALLBACK Tabaccaio(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
     char  tmp_descrizione[1024];
     char  tmp[255];
@@ -343,7 +343,7 @@ BOOL FAR PASCAL Tabaccaio(HWND hDlg, WORD message, WORD wParam, LONG lParam)
     }
     else if (message == WM_COMMAND)
     {
-        switch (wParam)
+        switch (LOWORD(wParam))
         {
         case 400:
         case 401:
@@ -369,7 +369,7 @@ BOOL FAR PASCAL Tabaccaio(HWND hDlg, WORD message, WORD wParam, LONG lParam)
         case 421:
         case 422:
         case 423:
-            scelta = wParam - 400;
+            scelta = LOWORD(wParam) - 400;
             LoadString(hInst, (wParam + 1000), tmp, 254);
 
             if (SizeMem[scelta].cc == 0)
@@ -479,7 +479,7 @@ static void AggiornaPalestra(HWND parent)
 //*******************************************************************
 
 #pragma argsused
-BOOL FAR PASCAL Palestra(HWND hDlg, WORD message, WORD wParam, LONG lParam)
+INT_PTR CALLBACK Palestra(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
 // Costi... (migliaia di lire)
 #define UN_MESE 50
@@ -500,7 +500,7 @@ BOOL FAR PASCAL Palestra(HWND hDlg, WORD message, WORD wParam, LONG lParam)
 
     else if (message == WM_COMMAND)
     {
-        switch (wParam)
+        switch (LOWORD(wParam))
         {
 
         case 110: // Vai in palestra
@@ -591,7 +591,7 @@ BOOL FAR PASCAL Palestra(HWND hDlg, WORD message, WORD wParam, LONG lParam)
 #endif
             }
 
-            switch (wParam)
+            switch (LOWORD(wParam))
             {
             case 115:
                 scad_pal_mese = x_mese + 1; // UN MESE
@@ -651,7 +651,7 @@ BOOL FAR PASCAL Palestra(HWND hDlg, WORD message, WORD wParam, LONG lParam)
 
 void RunTabacchi(HWND hDlg)
 {
-    FARPROC lpproc;
+    DLGPROC lpproc;
 
     if (x_vacanza != 2)
     { // 19 Mar 98 - Tabaccaio
@@ -672,7 +672,7 @@ void RunTabacchi(HWND hDlg)
 
 void RunPalestra(HWND hDlg)
 {
-    FARPROC lpproc;
+    DLGPROC lpproc;
 
     if (x_vacanza != 2)
     { // 20 Mar 98 - Palestra
@@ -693,7 +693,7 @@ void RunPalestra(HWND hDlg)
 
 void RunVestiti(HWND hDlg, int numero)
 {
-    FARPROC lpproc;
+    DLGPROC lpproc;
     char    tmp[128];
 
     // Versione femminile di "Bau House" e "Blue Rider"

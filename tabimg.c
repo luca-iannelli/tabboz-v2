@@ -203,7 +203,7 @@ int static NEAR PASCAL WMCreate(HWND hwnd, LPCREATESTRUCT lpCS)
         SetProp(hwnd, "hbmp_scarpe", hbmp_scarpe);
         SetProp(hwnd, "hbmp_sfondo", hbmp_sfondo);
 
-        SetWindowPos(hwnd, NULL, 0, 0, IMG_SIZEX, IMG_SIZEY, SWP_NOMOVE | SWP_NOZORDER);
+        /* Size is managed by the desktop layout. */
     }
 
     DEBUG_PRINTF("WMCreate done\n");
@@ -304,7 +304,12 @@ int static NEAR PASCAL WMPaint(HWND hwnd)
     HDC         hdc;
 
     DEBUG_PRINTF("WMPaint TabbozRedraw=%d\n", TabbozRedraw);
-    hdc = BeginPaint(hwnd, &ps);
+    HDC target = BeginPaint(hwnd, &ps);
+    hdc = CreateCompatibleDC(target);
+    HBITMAP composite = CreateCompatibleBitmap(target, IMG_SIZEX, IMG_SIZEY);
+    HGDIOBJ previous = SelectObject(hdc, composite);
+    RECT logical = {0,0,IMG_SIZEX,IMG_SIZEY};
+    FillRect(hdc,&logical,(HBRUSH)(COLOR_WINDOW+1));
 
     if (TabbozRedraw)
     { // Ricarica le immagini...
@@ -357,6 +362,13 @@ int static NEAR PASCAL WMPaint(HWND hwnd)
             DrawTransparentBitmap(hdc, hbmp_testa, hmask_testa, 30 + IMG_X_INC, 1 + IMG_Y_INC, IMG_SIZEX, IMG_SIZEY, 0, 0);
     }
 
+    RECT client; GetClientRect(hwnd,&client);
+    int width=client.right,height=MulDiv(width,IMG_SIZEY,IMG_SIZEX);
+    if(height>client.bottom){height=client.bottom;width=MulDiv(height,IMG_SIZEX,IMG_SIZEY);}
+    FillRect(target,&client,(HBRUSH)(COLOR_WINDOW+1));
+    SetStretchBltMode(target,COLORONCOLOR);
+    StretchBlt(target,(client.right-width)/2,(client.bottom-height)/2,width,height,hdc,0,0,IMG_SIZEX,IMG_SIZEY,SRCCOPY);
+    SelectObject(hdc,previous); DeleteObject(composite); DeleteDC(hdc);
     EndPaint(hwnd, &ps);
     DEBUG_PRINTF("WMPaint done\n");
 
@@ -367,8 +379,8 @@ int static NEAR PASCAL WMPaint(HWND hwnd)
 // Classe BMPView
 
 #pragma argsused
-long FAR PASCAL BMPViewWndProc(HWND hWnd, WORD msg,
-                               WORD wParam, LONG lParam)
+LRESULT CALLBACK BMPViewWndProc(HWND hWnd, UINT msg,
+                               WPARAM wParam, LPARAM lParam)
 {
     switch (msg)
     {
@@ -408,7 +420,7 @@ ATOM RegisterBMPViewClass(HANDLE hInst)
 #ifdef TABBOZ_WIN16
     wc.hbrBackground = (HBRUSH)(COLOR_WINDOW) + 1;
 #else
-    wc.hbrBackground = (HBRUSH)(COLOR_WINDOW);
+    wc.hbrBackground = (HBRUSH)(COLOR_WINDOW+1);
 #endif
     wc.lpszClassName = "BMPView";
     return RegisterClass(&wc);
@@ -498,8 +510,8 @@ int static NEAR PASCAL WMTipaPaint(HWND hwnd)
 extern HWND tipahDlg;
 
 #pragma argsused
-long FAR PASCAL BMPTipaWndProc(HWND hWnd, WORD msg,
-                               WORD wParam, LONG lParam)
+LRESULT CALLBACK BMPTipaWndProc(HWND hWnd, UINT msg,
+                               WPARAM wParam, LPARAM lParam)
 {
     char tmp[255];
 
@@ -567,7 +579,7 @@ ATOM RegisterBMPTipaClass(HANDLE hInst)
     wc.lpfnWndProc = (WNDPROC)BMPTipaWndProc;
     wc.hInstance = hInst;
     wc.hCursor = LoadCursor(hInst, MAKEINTRESOURCE(10));
-    wc.hbrBackground = (HBRUSH)(COLOR_WINDOW);
+    wc.hbrBackground = (HBRUSH)(COLOR_WINDOW+1);
     wc.lpszClassName = "BMPTipa";
     return RegisterClass(&wc);
 }

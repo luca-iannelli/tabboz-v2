@@ -30,7 +30,7 @@
 static char sccsid[] = "@(#)" __FILE__ " " VERSION " (Andrea Bonomi) " __DATE__;
 static char natale2;
 
-BOOL FAR PASCAL MostraPagella(HWND hDlg, WORD message, WORD wParam, LONG lParam);
+INT_PTR CALLBACK MostraPagella(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 
 typedef struct tagVACANZE
 {
@@ -97,7 +97,7 @@ int scad_pal_mese;
 void Giorno(HANDLE hInstance)
 {
     int     i;
-    FARPROC lpproc;
+    DLGPROC lpproc;
     char    tmp[255];
 
     x_giorno++;
@@ -322,7 +322,7 @@ void Giorno(HANDLE hInstance)
 // ------------------------------------------------------------------------------------------
 
 #pragma argsused
-BOOL FAR PASCAL MostraPagella(HWND hDlg, WORD message, WORD wParam, LONG lParam)
+INT_PTR CALLBACK MostraPagella(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
     char tmp[1024];
     int  i, k;
@@ -369,7 +369,7 @@ BOOL FAR PASCAL MostraPagella(HWND hDlg, WORD message, WORD wParam, LONG lParam)
 
     else if (message == WM_COMMAND)
     {
-        switch (wParam)
+        switch (LOWORD(wParam))
         {
         case IDCANCEL:
             EndDialog(hDlg, TRUE);
@@ -385,4 +385,14 @@ BOOL FAR PASCAL MostraPagella(HWND hDlg, WORD message, WORD wParam, LONG lParam)
     }
 
     return (FALSE);
+}
+
+/* Recompute calendar display state without replaying a day's side effects on load. */
+void TabbozCalendarRefresh(void) {
+    x_vacanza=0; current_tipa=0;
+    if ((x_mese==1 && x_giorno<7)||(x_mese==6 && x_giorno>15)||x_mese==7||x_mese==8||(x_mese==9&&x_giorno<15)||(x_mese==12&&x_giorno>22)) x_vacanza=1;
+    if(Rapporti>0 && ((x_mese==1&&x_giorno<7)||(x_mese==12&&x_giorno>22)))current_tipa=1;
+    if((x_mese==7||x_mese==8)&&Rapporti>93&&FigTipa>95)current_tipa=2;
+    if(x_giornoset==7)x_vacanza=2;
+    for(int i=0;InfoVacanze[i].giorno;i++)if(InfoVacanze[i].giorno==x_giorno&&InfoVacanze[i].mese==x_mese)x_vacanza=2;
 }

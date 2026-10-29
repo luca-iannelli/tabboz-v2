@@ -1,51 +1,41 @@
-<div align="center">
-  <a href="https://andreax79.github.io/tabboz/" target="_blank"><img alt="Tabboz Simulator" src="https://github.com/andreax79/tabboz/assets/1288154/64269165-8958-4f3a-945a-82c3ffffd4de"/></a>
-</div>
-<br/>
+# Tabboz Simulator — Windows Edition
 
-Simply tap the icon to launch the Tabboz Simulator directly in your browser.
+Porting nativo in C del [Tabboz Simulator originale](https://github.com/andreax79/tabboz) per **Windows 10 (1903+) e Windows 11 x64**.
 
-## 🖥️ Web development
+![Splash Windows Edition](assets/splash.png)
 
-<div align="center">
-  <a href="https://andreax79.github.io/tabboz/" target="_blank"><img alt="Tabboz Simulator Screenshot" src="https://github.com/andreax79/tabboz/assets/1288154/0999ef77-3e7a-45a0-9a0b-1206a6f5bddd"/></a>
-</div>
-<br/>
+Il motore, i personaggi, i suoni, le attivita' e il tono del gioco originale restano riconoscibili. Questa edizione introduce una finestra ridimensionabile, controlli Windows moderni, scorciatoie da tastiera, salvataggi nella cartella utente e **importi in euro con centesimi**, mantenendo l'economia interna originale.
 
-### 📖 Prerequisites
+## Giocare
 
-In order to compile the project we need the following software installed on our development machine:
-- Python >= 3.8
-- [Emscripten](https://emscripten.org/)
+Usare l'installer `TabbozSimulator-2.0.0-Windows-x64-Setup.exe` oppure estrarre lo ZIP portabile e avviare `Tabboz.exe`. Non servono browser, BWCC.DLL, compilatori o runtime aggiuntivi.
 
-### 📦 Builds
+Gli artefatti delle build automatiche sono nella sezione [Actions](https://github.com/luca-iannelli/tabboz-v2/actions/workflows/windows.yml). Non sono firmati digitalmente.
 
-Build the project.
+- **Ctrl+N**: nuova partita.
+- **Ctrl+O**: apri una partita `.tbz`.
+- **Ctrl+S**: salva la partita corrente.
+- **File → Salva con nome**: esporta una partita.
+- **Tab**, **Invio**, **Esc** e i tasti **Alt**: navigazione delle finestre.
 
-```shell
-make build
-```
+Le attivita' fanno avanzare il gioco secondo le regole originali. L'opzione degli eventi mentre la finestra e' ridotta a icona conserva il comportamento del timer originale.
 
-We also have a script for updating dialogs used in the project, you only need to run this if you modify the `.rc` files:
+I salvataggi sono in `%LOCALAPPDATA%\Tabboz Simulator\`. Anche la versione portabile separa i dati dall'eseguibile. La disinstallazione conserva le partite. I file non validi vengono conservati per recupero; se una scrittura fallisce, e' possibile riprovare, esportare altrove o uscire senza salvare.
 
-```shell
-make rc
-```
+## Sviluppo e verifica
 
-### 🎨 Code linting
+- [Compilare da Windows o WSL](docs/BUILD_WINDOWS.md)
+- [Verifiche eseguite e limiti](docs/VALIDATION.md)
+- [Progetto approvato](docs/superpowers/specs/2026-10-29-windows-native-design.md)
+- [Analisi originale con REA](docs/research/2026-10-29-original-windows-assessment.md)
+- [Stato del progetto](PROJECT_STATE.md)
 
-To fix the linting errors, use the following command:
+Il codice originale e la sua storia Git sono conservati. Le modifiche di portabilita' correggono i callback a 64 bit e sostituiscono i controlli Borland; le formule e i cataloghi di gioco sono mantenuti. Il caricamento non ripete piu' gli effetti di una giornata e non reimposta una partita dopo il primo avvio.
 
-```shell
-make format
-```
+## Crediti e licenza
 
-### 🚀 Links
+Gioco originale (C) 1997–2001 **Andrea Bonomi, Emanuele Caccialanza, Daniele Gazzarri e collaboratori**. Baseline: `andreax79/tabboz` commit `142fa7de71fe3d4700fa0027f18d45c6ccdaa9be`.
 
-- [Novantotto, A tool for porting Windows programs to WebAssembly](https://github.com/andreax79/novantotto)
-- [Emscripten, A complete compiler toolchain to WebAssembly](https://emscripten.org/)
-- [98.css, A design system for building faithful recreations of old UIs](https://github.com/jdan/98.css)
+Nuovo splash e icona forniti da **Luca Iannelli**. Le immagini originali dei personaggi restano incluse.
 
-## ⚖️ LICENSE
-
-[![GPL 3](https://www.gnu.org/graphics/gplv3-or-later.png)](https://www.gnu.org/licenses/gpl-3.0.en.html)
+Codice distribuito sotto **GNU GPL versione 3 o successiva**; vedere [LICENSE](LICENSE). Le attribuzioni originali restano nei sorgenti. Questa edizione non usa le vecchie librerie BWCC presenti nel materiale storico del repository.
